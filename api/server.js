@@ -25,7 +25,7 @@ server.get('/api/users', (req,res)=> {
     User.find()
         .then(users => {
             if(!users) {
-                res.status(404).json({message: 'does not exist'})
+                res.status(404).json({message: "The user with the specified ID does not exist"})
             } else {
                 res.status(200).json(users)
             }
@@ -41,7 +41,7 @@ server.post('/api/users', (req,res)=> {
     User.insert(newUser)
         .then(users=> {
             if(!newUser.name || !newUser.bio) {
-                res.status(400).json({message: 'provide name and bio'})
+                res.status(400).json({message: "Please provide name and bio for the user"})
             } else {
                 res.status(201).json(users)
             }
@@ -58,12 +58,14 @@ server.put('/api/users/:id', async (req,res)=> {
 
     try{
         if(!changes.id) {
-            res.status(404).json({message: 'does not exist'})
-        } else if(!changes.name || !changes.bio) {
-            res.status(400).json({message: 'provide name and bio'})
+            res.status(404).json({message: "The user with the specified ID does not exist"})
         } else{
             const result = await User.update(id, changes)
-            res.status(200).json(result)
+            if (!result) {
+                res.status(400).json({message: "Please provide name and bio for the user"})
+            } else {
+                res.status(200).json(result)
+            }
         }
     }catch (err) {
         res.status(500).json({message: err.message})
@@ -76,7 +78,7 @@ server.delete('/api/users/:id', (req,res) => {
         .then(users => {
             if(!users) {
                 res.status(404).json({
-                    message: `user ${req.params.id} does not exist`,
+                    message: "The user with the specified ID does not exist",
                 })
             } else {
                 res.status(200).json(users)
