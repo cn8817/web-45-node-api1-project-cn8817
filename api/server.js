@@ -10,7 +10,7 @@ server.get('/api/users/:id', (req,res)=> {
     User.findById(req.params.id)
         .then(users => {
             if(!users) {
-                res.status(404).json({message: 'user not found'})
+                res.status(404).json({message: 'does not exist'})
             } else {
                 res.status(200).json(users)
             }
@@ -25,7 +25,7 @@ server.get('/api/users', (req,res)=> {
     User.find()
         .then(users => {
             if(!users) {
-                res.status(404).json({message: 'user not found'})
+                res.status(404).json({message: 'does not exist'})
             } else {
                 res.status(200).json(users)
             }
@@ -41,7 +41,7 @@ server.post('/api/users', (req,res)=> {
     User.insert(newUser)
         .then(users=> {
             if(!newUser.name || !newUser.bio) {
-                res.status(400).json({message: 'name and bio required'})
+                res.status(400).json({message: 'provide name and bio'})
             } else {
                 res.status(201).json(users)
             }
@@ -58,9 +58,9 @@ server.put('/api/users/:id', async (req,res)=> {
 
     try{
         if(!changes.id) {
-            res.status(404).json({message: 'user not found'})
+            res.status(404).json({message: 'does not exist'})
         } else if(!changes.name || !changes.bio) {
-            res.status(400).json('name and bio required')
+            res.status(400).json({message: 'provide name and bio'})
         } else{
             const result = await User.update(id, changes)
             res.status(200).json(result)
