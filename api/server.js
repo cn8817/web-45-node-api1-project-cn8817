@@ -8,8 +8,12 @@ server.use(express.json())
 //GET /api/user/:id
 server.get('/api/users/:id', (req,res)=> {
     User.findById(req.params.id)
-        .then(user => {
-            res.status(200).json(user)
+        .then(users => {
+            if(user) {
+                res.status(200).json(users)
+            } else {
+                res.status(404).json({message: 'user not found'})
+            }
         })
         .catch(err => {
             res.status(500).json({message: err.message})
@@ -31,9 +35,9 @@ server.get('/api/users', (req,res)=> {
 //POST users
 server.post('/api/users', (req,res)=> {
     const newUser = req.body
-    User.create(newUser)
-        .then(user=> {
-            res.status(201).json(user)
+    User.insert(newUser)
+        .then(users=> {
+            res.status(201).json(users)
         })
         .catch(err => {
             res.status(500).json({message: err.message})
@@ -55,10 +59,10 @@ server.put('/api/users/:id', async (req,res)=> {
 
 //DELETE
 server.delete('/api/users/:id', (req,res) => {
-    User.delete(req.params.id)
-        .then(user => {
-            if(user) {
-                res.status(200).json(user)
+    User.remove(req.params.id)
+        .then(users => {
+            if(users) {
+                res.status(200).json(users)
             } else {
                 res.status(404).json({
                     message: `user ${req.params.id} does not exist`,
