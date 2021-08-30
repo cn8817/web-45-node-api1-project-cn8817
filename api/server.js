@@ -24,8 +24,11 @@ server.get('/api/users/:id', (req,res)=> {
 server.get('/api/users', (req,res)=> {
     User.find()
         .then(users => {
-            console.log(users)
-            res.status(200).json(users)
+            if(user) {
+                res.status(200).json(users)
+            } else {
+                res.status(404).json({message: 'user not found'})
+            }
         })
         .catch(err => {
             res.status(500).json({message: err.message})
@@ -37,7 +40,11 @@ server.post('/api/users', (req,res)=> {
     const newUser = req.body
     User.insert(newUser)
         .then(users=> {
-            res.status(201).json(users)
+            if(user) {
+                res.status(201).json(users)
+            } else {
+                res.status(400).json({message: 'bad request'})
+            }
         })
         .catch(err => {
             res.status(500).json({message: err.message})
@@ -50,8 +57,14 @@ server.put('/api/users/:id', async (req,res)=> {
     const changes = req.body
 
     try{
-        const result = await User.update(id, changes)
-        res.status(200).json(result)
+        if(!changes.id) {
+            res.status(404).json({message: 'user not found'})
+        } else if(!changes.name || !changes.bio) {
+            res.status(400).json('name and bio required')
+        } else{
+            const result = await User.update(id, changes)
+            res.status(200).json(result)
+        }
     }catch (err) {
         res.status(500).json({message: err.message})
     }
