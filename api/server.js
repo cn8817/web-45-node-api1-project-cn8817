@@ -9,10 +9,10 @@ server.use(express.json())
 server.get('/api/users/:id', (req,res)=> {
     User.findById(req.params.id)
         .then(users => {
-            if(user) {
-                res.status(200).json(users)
-            } else {
+            if(!users) {
                 res.status(404).json({message: 'user not found'})
+            } else {
+                res.status(200).json(users)
             }
         })
         .catch(err => {
@@ -24,10 +24,10 @@ server.get('/api/users/:id', (req,res)=> {
 server.get('/api/users', (req,res)=> {
     User.find()
         .then(users => {
-            if(user) {
-                res.status(200).json(users)
-            } else {
+            if(!users) {
                 res.status(404).json({message: 'user not found'})
+            } else {
+                res.status(200).json(users)
             }
         })
         .catch(err => {
@@ -40,10 +40,10 @@ server.post('/api/users', (req,res)=> {
     const newUser = req.body
     User.insert(newUser)
         .then(users=> {
-            if(user) {
-                res.status(201).json(users)
+            if(!newUser.name || !newUser.bio) {
+                res.status(400).json({message: 'name and bio required'})
             } else {
-                res.status(400).json({message: 'bad request'})
+                res.status(201).json(users)
             }
         })
         .catch(err => {
@@ -74,12 +74,12 @@ server.put('/api/users/:id', async (req,res)=> {
 server.delete('/api/users/:id', (req,res) => {
     User.remove(req.params.id)
         .then(users => {
-            if(users) {
-                res.status(200).json(users)
-            } else {
+            if(!users) {
                 res.status(404).json({
                     message: `user ${req.params.id} does not exist`,
                 })
+            } else {
+                res.status(200).json(users)
             }
         })
         .catch(err => {
